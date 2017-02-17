@@ -27,8 +27,8 @@ class Main(object):
         parser.add_argument("--n_std", help="Standard deviation of image noise[8]. Only affect when noise is set to 1.",
                             default=8, type=int)
         parser.add_argument("--n_percent",
-                            help="Standard deviation of image noise[8]. Only affect when noise is set to 1.",
-                            default=8, type=int)
+                            help="Percentage of mis-labels, default: [0.05]. Only affect when noise is set to 2.",
+                            default=0.05, type=float)
         parser.add_argument("--filter_num", help="Number of filter in convnet default:[32]", default=32, type=int);
         parser.add_argument("--fc_dim", help="Dimension of first fully connected layer [256]", default=256, type=int);
         parser.add_argument("-c", "--chkdir", help="Tensorflow checkpoints folder, default:%s" % DEFAULT_CHKDIR,
