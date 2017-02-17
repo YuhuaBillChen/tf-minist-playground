@@ -62,11 +62,11 @@ class MNISTData(object):
         """
         Add Gaussian Noise to Images
         """
-        def __init__(self, data_dir, precent=0.05):
+        def __init__(self, data_dir, percent=0.05):
             self.data_dir = data_dir;
-            self.precent = precent;
+            self.percent = percent;
             self.mnist = input_data.read_data_sets(self.data_dir, one_hot=True);
-            self.train = MNISTData.NoisyLabels.DataSet(self.mnist.train, precent)       # Only the training is noisy
+            self.train = MNISTData.NoisyLabels.DataSet(self.mnist.train, percent)       # Only the training is noisy
             self.validation = self.mnist.validation;
             self.test = self.mnist.test;
 

@@ -9,7 +9,8 @@ DEFAULT_BATCH_SIZE = 64;
 class Main(object):
     def __init__(self):
         self.args = self.parameter_setting();
-        self.model = MNISTModel.BaseModel(chkpt_dir=self.args.chkdir, batch_size=self.args.batch);
+        self.model = MNISTModel.BaseModel(chkpt_dir=self.args.chkdir, batch_size=self.args.batch, noise=self.args.noise,
+                                          n_std=self.args.n_std, n_percent=self.args.n_percent);
         self.main();
         return;
 
@@ -21,13 +22,18 @@ class Main(object):
         parser.add_argument("--epoch", help="Number of epochs for training [25]", default=25, type=int);
         parser.add_argument("--blocks", help="Number of blocks of two shortcut convolution layers in the net[8]",
                             default=8, type=int);
+        parser.add_argument("-n", "--noise", help="Type of noise to add, 0: no noise, 1: noisy image, 2: noisy label",
+                            choices=xrange(0, 3));
+        parser.add_argument("--n_std", help="Standard deviation of image noise[8]. Only affect when noise is set to 1.",
+                            default=8)
+        parser.add_argument("--n_percent", help="Standard deviation of image noise[8]. Only affect when noise is set to 1.",
+                            default=8)
         parser.add_argument("--filter_num", help="Number of filter in convnet default:[32]", default=32, type=int);
         parser.add_argument("--fc_dim", help="Dimension of first fully connected layer [256]", default=256, type=int);
         parser.add_argument("-c", "--chkdir", help="Tensorflow checkpoints folder, default:%s" % DEFAULT_CHKDIR,
                             default=DEFAULT_CHKDIR, type=str);
         parser.add_argument("-o", "--outdir", help="Output result in numpy format , default:%s" % DEFAULT_OUTDIR,
                             default=DEFAULT_OUTDIR, type=str);
-
         parser.add_argument("-b", "--batch", help="batch_size of training sample, default:%d" % DEFAULT_BATCH_SIZE,
                             default=DEFAULT_BATCH_SIZE, type=int)
         args = parser.parse_args();

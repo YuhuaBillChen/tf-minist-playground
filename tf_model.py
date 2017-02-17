@@ -6,6 +6,7 @@ import numpy as np
 import os
 import sropts
 from neural_networks import *
+from tf_data import *
 
 
 class MNISTModel(object):
@@ -15,7 +16,7 @@ class MNISTModel(object):
         """
 
         def __init__(self, data_dir="./data/MNIST", chkpt_dir="./chkpt/", batch_size=64, image_size=28, category=10,
-                     learning_rate=1e-3):
+                     learning_rate=1e-3, noise=0, n_std=8, n_percent=0.05):
             """
             Initialization of base model
             :param data_dir:        Data cache folder for MNSIT data
@@ -32,6 +33,9 @@ class MNISTModel(object):
             self.image_size = image_size;
             self.category = category;
             self.learning_rate = learning_rate;
+            self.noise = noise;
+            self.n_std = n_std;
+            self.n_percent = n_percent;
 
             # Initializations
             # Graph operations
@@ -58,8 +62,16 @@ class MNISTModel(object):
             Get/Download MNIST data
             :return:
             """
-            from tensorflow.examples.tutorials.mnist import input_data
-            return input_data.read_data_sets(self.data_dir, one_hot=True);
+            if self.noise == 0:
+                # No noise
+                return MNISTData.BaseImages(self.data_dir);
+            elif self.noise == 1:
+                # Noisy Images
+                return MNISTData.NoisyImages(self.data_dir, self.n_std);
+            elif self.noise == 2:
+                # Noisy Labels
+                return MNISTData.NoisyLabels(self.data_dir, self.n_percent);
+
 
         def init_ph(self):
             """
@@ -71,9 +83,6 @@ class MNISTModel(object):
             y = tf.placeholder(dtype=tf.float32, shape=(self.batch_size, self.category), name='in-label');
             is_train = tf.placeholder(dtype=tf.bool, shape=[], name='is_train');
             return x, y, is_train;
-
-        def visualized(self):
-            return;
 
         def build(self, h_dim=32, fc_dim=256, block_num=8):
             """
