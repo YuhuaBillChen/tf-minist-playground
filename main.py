@@ -43,7 +43,7 @@ class Main(object):
         with tf.device("/gpu:%d" % self.args.gpu_id):
             with tf.Session(config=config) as sess:
                 if not self.args.apply:
-                    self.model.train(sess=sess);
+                    self.model.train(sess=sess, epoch_num=self.args.epoch);
                 else:
                     if not os.path.exists(self.args.outdir):
                         os.makedirs(self.args.outdir);

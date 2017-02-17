@@ -83,7 +83,7 @@ class MNISTModel(object):
             :param block_num:
             :return:
             """
-            m_nn = NeuralNetworks.ConvMNIST(h_dim=32, fc_dim=1024, block_num=5, is_train=self.is_train);
+            m_nn = NeuralNetworks.ConvMNIST(h_dim=h_dim, fc_dim=fc_dim, block_num=block_num, is_train=self.is_train);
             self.predict_op = m_nn.nn_predict(self.x, reuse=False);
             self.m_loss_op = m_nn.loss(predict=self.predict_op, real=self.y);
             correct_prediction = tf.equal(tf.argmax(self.predict_op, 1), tf.argmax(self.y, 1))
@@ -132,7 +132,7 @@ class MNISTModel(object):
                 val_acc = np.mean(val_corr.astype(np.float32));
                 print "val: ", val_acc,
                 if val_acc > best_val_acc:
-                    self.saver.save(sess, self.chkpt_dir + "model.chkpt")
+                    self.saver.save(sess, self.chkpt_dir + os.path.sep + "model.chkpt")
                     best_val_acc = val_acc;
                     print "model saved!";
                 else:
@@ -146,7 +146,7 @@ class MNISTModel(object):
             """
             if self.predict_op is None:
                 self.build();
-            self.saver.restore(sess, self.chkpt_dir + "model.chkpt");
+            self.saver.restore(sess, self.chkpt_dir + os.path.sep + "model.chkpt");
             pred_labels, real_labels = self.predict(sess, num_of_images=self.mnist.test.num_examples,
                                                     dataset=self.mnist.test);
             print "Forward completed";
@@ -154,7 +154,6 @@ class MNISTModel(object):
             test_acc = np.mean(test_corr.astype(np.float32));
             print "average acc:", test_acc;
             return pred_labels, real_labels;
-
 
         def predict(self, sess, num_of_images, dataset):
             """
