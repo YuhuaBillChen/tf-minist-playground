@@ -15,7 +15,7 @@ class MNISTModel(object):
         """
 
         def __init__(self, data_dir="./data/MNIST", chkpt_dir="./chkpt/", batch_size=64, image_size=28, category=10,
-                     learning_rate=1e-3, val_ratio=0.2):
+                     learning_rate=1e-3):
             """
             Initialization of base model
             :param data_dir:        Data cache folder for MNSIT data
@@ -32,7 +32,6 @@ class MNISTModel(object):
             self.image_size = image_size;
             self.category = category;
             self.learning_rate = learning_rate;
-            self.val_ratio = val_ratio;
 
             # Initializations
             # Graph operations
@@ -105,12 +104,11 @@ class MNISTModel(object):
             if self.predict_op is None:
                 self.build();
             sess.run(self.init_op);
-            val_batches = int(self.val_ratio * self.mnist.train.num_examples / self.batch_size);
             best_val_acc = 0;
             for epoch in xrange(epoch_num):
                 count = 0;
                 total_acc = []
-                while count < (self.mnist.train.num_examples - val_batches * self.batch_size):
+                while count < self.mnist.train.num_examples:
                     count += self.batch_size;
                     [input_x, input_y] = self.mnist.train.next_batch(batch_size=self.batch_size);
                     input_x = np.reshape(input_x, newshape=(self.batch_size, 28, 28, 1));
@@ -127,8 +125,8 @@ class MNISTModel(object):
                             total_acc), " loss:", comp_loss, "acc:", comp_acc,
 
                 # Valuation
-                pred_labels, real_labels = self.predict(sess, num_of_images=val_batches * self.batch_size,
-                                                        dataset=self.mnist.train);
+                pred_labels, real_labels = self.predict(sess, num_of_images=self.mnist.validation.num_examples,
+                                                        dataset=self.mnist.validation);
 
                 val_corr = np.equal(np.argmax(pred_labels, 1), np.argmax(real_labels, 1));
                 val_acc = np.mean(val_corr.astype(np.float32));
