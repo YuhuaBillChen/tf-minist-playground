@@ -24,9 +24,9 @@ class MNISTData(object):
             self.data_dir = data_dir;
             self.stddev = stddev;
             self.mnist = input_data.read_data_sets(self.data_dir, one_hot=True);
-            self.train = MNISTData.NoisyImages.DataSet(self.mnist.train, stddev);           # Only the training is noisy
-            self.validation = self.mnist.validation;
-            self.test = self.mnist.test;
+            self.train = MNISTData.NoisyImages.DataSet(self.mnist.train, stddev);
+            self.validation = MNISTData.NoisyImages.DataSet(self.mnist.validation);
+            self.test = self.mnist.test;                    # Test set is still ground truth
 
         class DataSet(object):
             """
@@ -67,17 +67,17 @@ class MNISTData(object):
             self.percent = percent;
             self.mnist = input_data.read_data_sets(self.data_dir, one_hot=True);
             self.train = MNISTData.NoisyLabels.DataSet(self.mnist.train, percent)       # Only the training is noisy
-            self.validation = self.mnist.validation;
-            self.test = self.mnist.test;
+            self.validation = MNISTData.NoisyLabels.DataSet(self.mnist.validation, percent=percent);
+            self.test = self.mnist.test;                # Test set is still ground truth
 
         class DataSet(object):
             """
             Helper class to wrap up mnist data sets
             """
 
-            def __init__(self, data_set, precent):
+            def __init__(self, data_set, percent):
                 self.data_set = data_set;
-                self.precent = precent;
+                self.percent = percent;
                 self.images = data_set.images;
                 self.labels = None;      # Should not be called here
                 self.num_examples = data_set.num_examples;
@@ -96,7 +96,7 @@ class MNISTData(object):
             def noisy_labels(self, input_y):
                 output_y = np.array(input_y);
                 for i in xrange(output_y.shape[0]):
-                    if np.random.random_sample() < self.precent:
+                    if np.random.random_sample() < self.percent:
                         while np.alltrue(np.equal(output_y[i], input_y[i])):
                             np.random.shuffle(output_y[i]);
                 return output_y;
