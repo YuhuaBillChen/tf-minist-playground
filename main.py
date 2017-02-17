@@ -23,11 +23,12 @@ class Main(object):
         parser.add_argument("--blocks", help="Number of blocks of two shortcut convolution layers in the net[8]",
                             default=8, type=int);
         parser.add_argument("-n", "--noise", help="Type of noise to add, 0: no noise, 1: noisy image, 2: noisy label",
-                            default=0, choices=xrange(0, 3));
+                            default=0, choices=xrange(0, 3), type=int);
         parser.add_argument("--n_std", help="Standard deviation of image noise[8]. Only affect when noise is set to 1.",
-                            default=8)
-        parser.add_argument("--n_percent", help="Standard deviation of image noise[8]. Only affect when noise is set to 1.",
-                            default=8)
+                            default=8, type=int)
+        parser.add_argument("--n_percent",
+                            help="Standard deviation of image noise[8]. Only affect when noise is set to 1.",
+                            default=8, type=int)
         parser.add_argument("--filter_num", help="Number of filter in convnet default:[32]", default=32, type=int);
         parser.add_argument("--fc_dim", help="Dimension of first fully connected layer [256]", default=256, type=int);
         parser.add_argument("-c", "--chkdir", help="Tensorflow checkpoints folder, default:%s" % DEFAULT_CHKDIR,

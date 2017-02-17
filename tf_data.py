@@ -56,7 +56,7 @@ class MNISTData(object):
                 for i, im in enumerate(input_x):
                     noisy = np.array(np.clip(255 * im + self.stddev * np.random.randn(im.shape[0]), 0, 255), dtype=np.uint8);
                     output_x[i, :] = noisy;
-                return output_x;
+                return np.array(output_x, dtype=np.float32)/255;
 
     class NoisyLabels(BaseImages):
         """
@@ -97,7 +97,7 @@ class MNISTData(object):
                 output_y = np.array(input_y);
                 for i in xrange(output_y.shape[0]):
                     if np.random.random_sample() < self.precent:
-                        while (np.alltrue(np.equal(output_y[i], input_y[i]))):
+                        while np.alltrue(np.equal(output_y[i], input_y[i])):
                             np.random.shuffle(output_y[i]);
                 return output_y;
 
