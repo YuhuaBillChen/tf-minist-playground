@@ -25,7 +25,7 @@ class MNISTData(object):
             self.stddev = stddev;
             self.mnist = input_data.read_data_sets(self.data_dir, one_hot=True);
             self.train = MNISTData.NoisyImages.DataSet(self.mnist.train, stddev);
-            self.validation = MNISTData.NoisyImages.DataSet(self.mnist.validation);
+            self.validation = MNISTData.NoisyImages.DataSet(self.mnist.validation, stddev=stddev);
             self.test = self.mnist.test;                    # Test set is still ground truth
 
         class DataSet(object):
@@ -36,9 +36,10 @@ class MNISTData(object):
             def __init__(self, data_set, stddev):
                 self.data_set = data_set;
                 self.stddev = stddev;
-                self.images = None;      # Should not be called here
+                self.images = self.noisy_images(data_set.images);
                 self.labels = data_set.labels;
                 self.num_examples = data_set.num_examples;
+                self.count = 0;
 
             def next_batch(self, batch_size):
                 """
@@ -47,9 +48,13 @@ class MNISTData(object):
                 :return: images, labels
 
                 """
-                [input_x, input_y] = self.data_set.next_batch(batch_size);
-                output_x = self.noisy_images(input_x);
-                return [output_x, input_y];
+                if self.count + batch_size > self.num_examples:
+                    self.count = 0;
+                start_img = self.count;
+                end_img = self.count + batch_size;
+                batch_x = self.images[start_img:end_img, :];
+                batch_y = self.labels[start_img:end_img, :];
+                return [batch_x, batch_y];
 
             def noisy_images(self, input_x):
                 output_x = np.zeros(input_x.shape);
@@ -79,8 +84,9 @@ class MNISTData(object):
                 self.data_set = data_set;
                 self.percent = percent;
                 self.images = data_set.images;
-                self.labels = None;      # Should not be called here
+                self.labels = self.noisy_labels(data_set.labels);
                 self.num_examples = data_set.num_examples;
+                self.count = 0;
 
             def next_batch(self, batch_size):
                 """
@@ -89,9 +95,13 @@ class MNISTData(object):
                 :return: images, labels
 
                 """
-                [input_x, input_y] = self.data_set.next_batch(batch_size);
-                output_y = self.noisy_labels(input_y);
-                return [input_x, output_y];
+                if self.count + batch_size > self.num_examples:
+                    self.count = 0;
+                start_img = self.count;
+                end_img = self.count + batch_size;
+                batch_x  = self.images[start_img:end_img, :];
+                batch_y  = self.labels[start_img:end_img, :];
+                return [batch_x, batch_y];
 
             def noisy_labels(self, input_y):
                 output_y = np.array(input_y);
