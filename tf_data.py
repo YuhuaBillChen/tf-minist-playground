@@ -4,11 +4,13 @@ Customized data batching class based on tensorflow's MNIST helper module
 from tensorflow.examples.tutorials.mnist import input_data
 import numpy as np;
 
+
 class MNISTData(object):
     class BaseImages(object):
         """
         Completely identical to mnist dataset
         """
+
         def __init__(self, data_dir):
             self.data_dir = data_dir;
             self.mnist = input_data.read_data_sets(self.data_dir, one_hot=True);
@@ -20,13 +22,14 @@ class MNISTData(object):
         """
         Add Gaussian Noise to Images
         """
+
         def __init__(self, data_dir, stddev=8):
             self.data_dir = data_dir;
             self.stddev = stddev;
             self.mnist = input_data.read_data_sets(self.data_dir, one_hot=True);
             self.train = MNISTData.NoisyImages.DataSet(self.mnist.train, stddev);
             self.validation = MNISTData.NoisyImages.DataSet(self.mnist.validation, stddev=stddev);
-            self.test = self.mnist.test;                    # Test set is still ground truth
+            self.test = self.mnist.test;  # Test set is still ground truth
 
         class DataSet(object):
             """
@@ -54,26 +57,29 @@ class MNISTData(object):
                 end_img = self.count + batch_size;
                 batch_x = self.images[start_img:end_img, :];
                 batch_y = self.labels[start_img:end_img, :];
+                self.count += batch_size;
                 return [batch_x, batch_y];
 
             def noisy_images(self, input_x):
                 output_x = np.zeros(input_x.shape);
                 for i, im in enumerate(input_x):
-                    noisy = np.array(np.clip(255 * im + self.stddev * np.random.randn(im.shape[0]), 0, 255), dtype=np.uint8);
+                    noisy = np.array(np.clip(255 * im + self.stddev * np.random.randn(im.shape[0]), 0, 255),
+                                     dtype=np.uint8);
                     output_x[i, :] = noisy;
-                return np.array(output_x, dtype=np.float32)/255;
+                return np.array(output_x, dtype=np.float32) / 255;
 
     class NoisyLabels(BaseImages):
         """
         Add Gaussian Noise to Images
         """
+
         def __init__(self, data_dir, percent=0.05):
             self.data_dir = data_dir;
             self.percent = percent;
             self.mnist = input_data.read_data_sets(self.data_dir, one_hot=True);
-            self.train = MNISTData.NoisyLabels.DataSet(self.mnist.train, percent)       # Only the training is noisy
+            self.train = MNISTData.NoisyLabels.DataSet(self.mnist.train, percent)  # Only the training is noisy
             self.validation = MNISTData.NoisyLabels.DataSet(self.mnist.validation, percent=percent);
-            self.test = self.mnist.test;                # Test set is still ground truth
+            self.test = self.mnist.test;  # Test set is still ground truth
 
         class DataSet(object):
             """
@@ -99,8 +105,9 @@ class MNISTData(object):
                     self.count = 0;
                 start_img = self.count;
                 end_img = self.count + batch_size;
-                batch_x  = self.images[start_img:end_img, :];
-                batch_y  = self.labels[start_img:end_img, :];
+                batch_x = self.images[start_img:end_img, :];
+                batch_y = self.labels[start_img:end_img, :];
+                self.count += batch_size;
                 return [batch_x, batch_y];
 
             def noisy_labels(self, input_y):
@@ -110,4 +117,3 @@ class MNISTData(object):
                         while np.alltrue(np.equal(output_y[i], input_y[i])):
                             np.random.shuffle(output_y[i]);
                 return output_y;
-
