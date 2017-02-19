@@ -18,8 +18,8 @@ Requirement:
 
 Tutorial
 ---------------
-`git clone https://github.com/YuhuaBillChen/tf-minist-playground.git
-cd tf-minist-playground`
+`git clone https://github.com/YuhuaBillChen/tf-minist-playground.git`
+`cd tf-minist-playground`
 Training:
 `python main.py`
 Testing:
@@ -27,7 +27,7 @@ Testing:
 
 Usage
 ------------------------------
-`usage: MNISTProgram [-h] [--apply] [--gpu_id GPU_ID] [--epoch EPOCH]
+usage: MNISTProgram [-h] [--apply] [--gpu_id GPU_ID] [--epoch EPOCH]
                     [--blocks BLOCKS] [-n {0,1,2}] [--n_std N_STD]
                     [--n_percent N_PERCENT] [--filter_num FILTER_NUM]
                     [--fc_dim FC_DIM] [-c CHKDIR] [-o OUTDIR] [-b BATCH]
@@ -59,7 +59,7 @@ optional arguments:
                         Output result in numpy format , default:./result/
   -b BATCH, --batch BATCH
                         batch_size of training sample, default:64
-`                        
+                        
 Sample use case
 -----------------------
 Train with noise free data:
